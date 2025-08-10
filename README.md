@@ -1,5 +1,8 @@
 # Wall-Avoider web-game
-voider Game – A fun browser-based arcade game built with HTML, CSS, and JavaScript. Dodge red walls by moving left or right with arrow keys, press Space to start, and try to survive as long as possible. The game speeds up over time and saves your top score locally.
+
+**Avoider Game** – A fun browser-based arcade game built with HTML, CSS, and JavaScript. 
+Dodge red walls by moving left or right with arrow keys, press **Space** to start, and try to survive as long as possible. 
+The game speeds up over time and saves your top score locally.
 
 ## Gameplay
 - Press **Space** to start.
@@ -11,7 +14,12 @@ voider Game – A fun browser-based arcade game built with HTML, CSS, and JavaSc
 - Fast-paced, endless dodging action.
 - Difficulty increases as you play.
 - Saves your top score automatically.
-- 100% vanilla JavaScript — no frameworks.
+- No external libraries — 100% vanilla HTML, CSS, and JavaScript.
+
+## 🛠 Tech Stack
+- **HTML** → Game layout and structure.
+- **CSS** → Styling and animations *(embedded in HTML)*.
+- **JavaScript** → Game logic, collision detection, scoring, speed control *(embedded in HTML)*.
 
 ## Project Structure
 - **start page.html** – Game start screen.
