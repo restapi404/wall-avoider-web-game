@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Wall Avoider Game</title>
+        
+    <style>
+        /* Reset default margin and padding for all elements */
+        * {
+            margin: 0;   /* Removes default margin around elements */
+            padding: 0;   /* Removes default padding inside elements */
+            box-sizing: border-box;  /* Ensures padding and border are included in width/height */
+        }
+
+        /* Top score text style */
+        #top-score {
+            color: white;         /* White text color */
+            font-size: 20px;         /* Font size set to 20px */
+            font-family: monospace;  /* Monospace font for a console-style look */
+            margin-top: 10px;        /* Adds space above top score */
+            text-align: center;       /* Centers the text horizontally */
+        }
+
+        /* Container for score display and reset button */
+        #score-container {
+            display: flex;                 /* Use flexbox layout */
+            justify-content: space-between;  /* Space out items left and right */
+            align-items: center;           /* Align items vertically in the center */
+            gap: 10px;                    /* Adds space between items */
+        }
+
+        /* Style for both score text and reset button */
+        #score-container p,
+        #score-container button {
+            margin: 0;               /* Removes margin to prevent spacing issues */
+            padding: 5px 10px;       /* Adds internal spacing around the text */
+            font-size: 18px;         /* Sets font size to 18px */
+        }
+
+        /* Styling for the overall page body */
+        body {
+            margin: 0;                        /* Remove default margin around the page */
+            font-family: Arial, sans-serif;   /* Use Arial or default sans-serif fonts for body text */
+            background-color: black;        /* Set entire background color to black */
+            color: white;                   /* Default text color set to white */
+            display: flex;                    /* Enable flexbox layout for vertical centering */
+            flex-direction: column;           /* Stack children vertically */
+            align-items: center;              /* Center child elements horizontally */
+        }
+
+        /* Style for the heading/title */
+        h1 {
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; /* Use elegant sans-serif font stack */
+            margin-top: 30px;            /* Add space above the heading */
+            font-size: 50px;             /* Large font size for the heading */
+            text-decoration: underline;  /* Underline the heading */
+        }
+
+        /* Style applied to all div elements */
+        div{
+            font-size: 20px;          /* Set font size to 20px for all div content */
+        }
+
+        /* Style for the Reset button (elements with class "reset") */
+        .reset{
+            background-color: red;       /* Red background color */
+            color: white;                /* White text color */
+            font-size: 18px;               /* Font size set to 18px */
+            padding: 7px 15px;             /* Top-bottom: 7px, Left-right: 15px padding inside button */
+        }
+
+        /* Style for the main game grid area */
+        #game {
+            display: grid;                    /* Use CSS Grid layout for arranging cells */
+            grid-template-columns: repeat(4, 45px); /* Create 4 columns, each 75px wide */
+            grid-template-rows: repeat(12, 30px);   /* Create 12 rows, each 50px tall */
+            gap: 5px 1px;                          /* Set row gap to 5px and column gap to 1px */
+            margin-top: 20px;               /* Space above the game grid */
+        }
+
+        /* Style for each grid cell */
+        .cell {
+            width: 40px;              /* Width of each cell */
+            height: 30px;             /* Height of each cell */
+            background-color: rgb(117, 115, 115);    /* Grayish background color for regular cells */
+        }
+
+        /* Style for the player cell */
+        .player {
+            background-color: limegreen;     /* Bright green to represent the player */
+            border-radius: 50%;               /* Make the cell circular */
+        }
+
+        /* Style for wall cells */
+        .wall {
+            background-color: red;           /* Red color for walls/obstacles */
+        }
+
+        /* Style for the instruction or status text displayed before/after game */
+        #startText {
+            margin-top: 20px;            /* Space above the text */
+            font-size: 20px;             /* Set font size to 20px */
+            color: yellow;             /* Yellow color to highlight the instruction text */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Main game title -->
+    <h1>WALL AVOIDER</h1>
+  
+    <!-- Empty header (can be removed, doesn't display anything) -->
+    <h1></h1>
+
+    <!-- Instructional text shown before the game starts -->
+    <div id="startText">Press SPACE to Start</div>
+
+    <!-- Container for displaying top score and current score -->
+    <div id="score-container">
+        <p id="top-score">Top Score: 0</p>         <!-- Displays the highest score stored in browser -->
+        <p id="current-score">Score: 0</p>         <!-- Displays the player's current score -->
+    </div>
+
+    <!-- Another empty header (can also be removed) -->
+    <h1></h1>
+
+    <!-- Button to reset top score (clears localStorage) -->
+    <button class="reset" onclick="resetTopScore()">Reset Top Score</button>
+
+    <!-- Container where game grid cells are dynamically created -->
+    <div id="game"></div>
+
+    <!-- JavaScript section for game logic -->
+    <script>
+        const rows = 12;                                 // Total number of rows in the grid
+        const cols = 4;                                  // Total number of columns in the grid
+        const game = document.getElementById("game");    // Reference to the game container
+        const startText = document.getElementById("startText"); // Reference to start instruction text
+
+        // Game state variables
+        let playerPos = { row: rows - 1, col: 1 };       // Initial player position (bottom row, column 1)
+        let cells = [];                                  // Flat array to hold all cell elements
+        let walls = [];                                  // Array to track positions of wall rows
+        let gameStarted = false;                         // Tracks if game has started
+        let score = 0;                                   // Current score of the player
+        let topScore = localStorage.getItem("topScore") || 0; // Retrieve top score from browser memory
+        let speed = 800;                                 // Delay between updates in milliseconds
+
+        // Update the displayed top score
+        document.getElementById("top-score").textContent = "Top Score: " + topScore;
+
+        // Create the grid dynamically by adding divs
+        function createGrid() {
+            game.innerHTML = "";               // Clear any existing cells
+            cells = [];                        // Reset the cells array
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const cell = document.createElement("div"); // Create a new div element for each cell
+                    cell.classList.add("cell");                 // Assign the cell class
+                    game.appendChild(cell);                     // Add cell to the game container
+                    cells.push(cell);                           // Add cell to the array
+                }
+            }
+        }
+
+        // Draw the player by coloring the corresponding cell
+        function drawPlayer() {
+            const index = playerPos.row * cols + playerPos.col; // Convert row-col to array index
+            cells[index].classList.add("player");               // Add player class
+        }
+
+        // Remove player styling from all cells
+        function clearPlayer() {
+            cells.forEach((cell) => cell.classList.remove("player"));
+        }
+
+        // Draw wall blocks on screen (leave gap where player can pass)
+        function drawWalls() {
+            cells.forEach((cell) => cell.classList.remove("wall")); // Clear old walls
+
+            for (let i = 0; i < walls.length; i++) {
+                const { row, gapCol } = walls[i];                    // Get wall row and gap position
+                for (let c = 0; c < cols; c++) {
+                    const index = row * cols + c;                      // Convert to flat index
+                    if (c !== gapCol && row >= 0 && row < rows) {
+                        cells[index].classList.add("wall");              // Add wall to cells except gap column
+                    }
+                }
+            }
+        }
+
+        // Move all walls one row downward
+        function moveWalls() {
+            for (let i = 0; i < walls.length; i++) {
+                walls[i].row += 1;             // Move each wall row down by one
+            }
+            walls = walls.filter((w) => w.row < rows); // Remove walls that go off screen
+        }
+
+        // Generate a new wall row at the top with a random gap
+        function generateWall() {
+            const gapCol = Math.floor(Math.random() * cols); // Random column to leave as a gap
+            walls.push({ row: 0, gapCol });                  // Add new wall to array
+        }
+
+        // Update the game state for each tick
+        function updateGame() {
+            moveWalls();                               // Move walls down
+            if (score % 2 === 0) generateWall();       // Generate new wall every 2 ticks
+
+                drawWalls();                               // Redraw all walls
+                clearPlayer();                             // Remove old player
+                drawPlayer();                              // Draw player again
+
+                checkCollision();                          // Check for game over
+
+                score++;                                   // Increase score
+                document.getElementById("current-score").textContent = "Score: " + score; // Update score display
+
+                if (score % 10 === 0 && speed > 300) speed -= 50; // Increase difficulty every 10 points
+        }
+
+        // Check if player has collided with a wall
+        function checkCollision() {
+            for (let i = 0; i < walls.length; i++) {
+                if (
+                    walls[i].row === playerPos.row &&       // If wall is in the same row
+                    walls[i].gapCol !== playerPos.col       // And there's no gap at the player's column
+                ) {
+                    gameOver();                             // Call game over logic
+                    alert("Game Over! Your Score: " + score); // Show alert
+                    location.reload();                      // Reload the page
+                }
+            }
+        }
+
+        // Game loop: called recursively via setTimeout
+        function gameLoop() {
+            if (!gameStarted) return;   // Stop if game hasn't started
+            updateGame();               // Update the game state
+            setTimeout(gameLoop, speed); // Schedule next frame
+        }
+
+        // Handles actions when game ends
+        function gameOver() {
+            if (score > topScore) {
+                topScore = score;                                 // Update top score if current is higher
+                localStorage.setItem("topScore", topScore);       // Save new top score in browser
+            }
+            document.getElementById("top-score").textContent = "Top Score: " + topScore; // Update display
+        }
+
+        // Reset the top score manually
+        function resetTopScore() {
+            localStorage.removeItem("topScore");               // Remove top score from browser storage
+            topScore = 0;                                      // Reset variable
+            document.getElementById("top-score").textContent = "Top Score: " + topScore; // Update display
+        }
+
+        // Listen for keyboard controls (space to start, arrows to move)
+        document.addEventListener("keydown", (e) => {
+            if (!gameStarted && e.code === "Space") {
+                gameStarted = true;            // Mark game as started
+                startText.style.display = "none"; // Hide instruction text
+                gameLoop();                    // Start game loop
+                return;
+            }
+
+            if (!gameStarted) return;        // Ignore input if game hasn’t started
+
+            // Move player left
+            if (e.key === "ArrowLeft" && playerPos.col > 0) {
+                playerPos.col--;
+            }
+
+            // Move player right
+            if (e.key === "ArrowRight" && playerPos.col < cols - 1) {
+                playerPos.col++;
+            }
+
+            clearPlayer();                   // Remove old player position
+            drawPlayer();                    // Draw at new position
+        });
+
+        // Initial setup: draw grid and place player
+        createGrid();   // Create game board
+        drawPlayer();   // Place player on grid
+    </script>
+</body>
