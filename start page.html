@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Avoider Game Start</title>
+    <style>
+        body{
+            background-color: rgb(68, 67, 67);
+        }
+        .title {
+            font-family: Arial, Helvetica, sans-serif;
+            color: rgb(0, 217, 255); 
+            font-size: 70px;
+            font-weight: bold;
+            margin-left: 470px;
+            margin-top: 280px;
+            margin-bottom: 50px;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 0ch;
+            animation: typing 2s steps(13) forwards;
+            border-right: 4px solid rgb(6, 6, 156);
+        }
+
+        @keyframes typing {
+            from {
+                width: 0ch;
+            }
+            to {
+                width: 14ch;
+            }
+        }
+
+        .title:hover {
+            text-decoration: underline;
+        }
+
+        .start {
+            background-color: orange;
+            border: none;
+            font-family: Arial, sans-serif;
+            font-size: 40px;
+            color: white;
+            margin-left: 640px;
+            border-radius: 15px;
+            cursor: pointer;
+            padding: 9px 17px;
+            transition: background-color 0.15s, color 0.15s ease, transform 0.15s ease,box-shadow 0.15s ease;
+            text-decoration: none;
+            transform-origin: center;
+            display: inline-block;
+        }
+
+        .start:hover {
+            background-color: rgb(6, 6, 156);
+            color: orange;
+            opacity: 0.4;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+            transform: scale(1.0);
+        }
+
+        .start:active {
+            opacity: 0.1;
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+
+<p class="title">AVOIDER GAME</p>
+<a class="start" href="index.html">START</a>
+
+</body>
+</html>
