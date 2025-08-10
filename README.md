@@ -16,10 +16,10 @@ The game speeds up over time and saves your top score locally.
 - Saves your top score automatically.
 - No external libraries — 100% vanilla HTML, CSS, and JavaScript.
 
-## 🛠 Tech Stack
+## Tech Stack
 - **HTML** → Game layout and structure.
-- **CSS** → Styling and animations *(embedded in HTML)*.
-- **JavaScript** → Game logic, collision detection, scoring, speed control *(embedded in HTML)*.
+- **CSS** → Styling and animations *(embedded directly in HTML)*.
+- **JavaScript** → Game logic, collision detection, scoring, speed control *(embedded directly in HTML)*.
 
 ## Project Structure
 - **start page.html** – Game start screen.
